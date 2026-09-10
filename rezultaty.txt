@@ -1,0 +1,7 @@
+| Krok               | 		Status API 	        | 			        Co potwierdził SQL 			                |
+| ------------------ | -------------------------| --------------------------------------------------------------|
+| Utworzenie         |     201 created   	    | Stworzona rezerwacja istnieje                  		        |
+| Konflikt           |     409 conflict   	    | Nie została utworzona druga rezerwacja na tym samym urządzeniu|                   
+| Anulowanie         |     200 cancelled       	| Poprzednia rezerwacja jest już nieaktywna (is_active=0)       |            
+| Ponowne anulowanie |     200 unchanged      	| rezerwacja nadal nieaktywna                    		        |
+| Ponowna rezerwacja |     201 created      	| rezerwacja tego samego urządzenia została utworzona           |      
