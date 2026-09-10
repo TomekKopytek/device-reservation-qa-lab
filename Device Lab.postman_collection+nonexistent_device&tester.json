@@ -1,0 +1,184 @@
+{
+  "info": {
+    "_postman_id": "0ddeef40-2061-423b-b9ae-d4b9cfaa8f34",
+    "name": "Device Lab",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50910745",
+    "_collection_link": "https://go.postman.co/collection/50910745-0ddeef40-2061-423b-b9ae-d4b9cfaa8f34?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Wszystkie urządzenia",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:3000/devices",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "3000",
+          "path": [
+            "devices"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Wolne urządzenia",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:3000/devices/available",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "3000",
+          "path": [
+            "devices",
+            "available"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Utworzenie rezerwacji - sukces",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 1,\"tester_id\": 3}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:3000/reservations",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "3000",
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Wymagane jest wpisanie za device_id identyfikatora urządzenia, które obecnie nie jest zajęte (is_active=0)."
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\":1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:3000/reservations/cancel",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "3000",
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Nieistniejące urządzenie",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 999,\"tester_id\": 1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:3000/reservations",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "3000",
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Request powinien używać wolnego urządzenia."
+      },
+      "response": []
+    },
+    {
+      "name": "Nieistniejący użytkownik",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 1,\"tester_id\": 999}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:3000/reservations",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "3000",
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Request powinien używać wolnego urządzenia, zeby badać wyłącznie błąd testera, bez konfliktu rezerwacji."
+      },
+      "response": []
+    }
+  ]
+}

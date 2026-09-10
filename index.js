@@ -53,11 +53,31 @@ const server = http.createServer((req, res) => {
                         res.end(JSON.stringify({ "status" : "created" }));
                     })
                     .catch((error) => {
+                        console.dir(error, { depth: null });
                         if(error.number === 2601)
                         {
                             res.statusCode = 409;
                             res.setHeader("Content-Type", "application/json");
                             res.end(JSON.stringify({ error: "Device is already reserved" }));
+                        }
+                        else if(error.number === 547)
+                        {
+                            if(error.message.includes("fk_devices_id"))
+                            {
+                                res.statusCode = 404;
+                                res.setHeader("Content-Type", "application/json");
+                                res.end(JSON.stringify({ error: "Device does not exist" }));
+                            }
+                            else if(error.message.includes("fk_testers_id")){
+                                res.statusCode = 404;
+                                res.setHeader("Content-Type", "application/json");
+                                res.end(JSON.stringify({ error: "Tester does not exist" }));
+                            }
+                            else {
+                                res.statusCode = 500;
+                                res.setHeader("Content-Type", "application/json");
+                                res.end(JSON.stringify({ error: "Database error" }));
+                            }
                         }
                         else {
                             res.statusCode = 500;
