@@ -55,3 +55,19 @@ Oczekiwany wynik: 0 wierszy - brak urządzeń z dwiema aktywnymi rezerwacjami.
 Weryfikacja: Uruchomienie pliku `check-active-reservation-duplicates.sql` w SSMS
 
 Rzeczywisty wynik: 0 wierszy - brak naruszeń reguły.
+
+===================================================================================================================
+
+Cel testu 4 - Sprawdzenie pełnego cyklu rezerwacji urządzenia o id = 3.
+
+prerequisit: Urządzenie o id=3 jest wolne (nie ma aktywnej rezerwacji), testerzy o id = 1 && 2 istnieją w bazie.
+
+Kroki reprodukcji:
+1. Utworzenie rezerwacji poprzez wysłanie POST request na endpoint /reservations z body JSON {"device_id":3, "tester_id":1}. Zwrócony status: 201 "created". Weryfikacja w bazie danych: Utworzono aktywną (is_active=1) rezerwacje o id = 11.
+2. Próba zarezerwowania tego samego urządzenia przez innego testera poprzez POST request na endpoint /reservations z body JSON {"device_id":3, "tester_id":2}. Zwrócony status: 409 "Conflict". Weryfikacja w bazie danych: Nie utworzono nowego rekordu w tabeli `reservations`.
+3. Anulowanie aktywnej rezerwacji na tym samym urządzeniu poprzez PATCH request na endpoint /reservations/cancel z body {"reservation_id":11}. Zwrócony status: 200 "cancelled". Weryfikacja w bazie danych: Rezerwacja o id = 11 jest nieaktywna (is_active=0).
+4. Próba ponownej rezerwacji tego samego urządzenia poprzez wysłanie POST request na endpoint /reservations z body JSON {"device_id":3, "tester_id":2}. Zwrócony status: 201 "created". Weryfikacja w bazie danych: Utworzono aktywną (is_active=1) rezerwację o id=13.
+
+DO WERYFIKACJI REZULTATÓW UŻYTO QUERIES Z PLIKÓW `check-active-reservation-duplicates.sql` i `lifecycle-check.sql`.
+
+Zapytanie `check-active-reservation-duplicates.sql` zwróciło 0 wierszy - brak urządzeń z więcej niż jedną, aktywną rezerwacją.
