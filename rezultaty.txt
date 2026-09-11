@@ -1,7 +1,26 @@
-| Krok               | 		Status API 	        | 			        Co potwierdził SQL 			                |
+| Krok               | 		Status API 	| 			Co potwierdził SQL 			|
 | ------------------ | -------------------------| --------------------------------------------------------------|
-| Utworzenie         |     201 created   	    | Stworzona rezerwacja istnieje                  		        |
-| Konflikt           |     409 conflict   	    | Nie została utworzona druga rezerwacja na tym samym urządzeniu|                   
+| Utworzenie         |     201 created   	| Stworzona rezerwacja istnieje                  		|
+| Konflikt           |     409 conflict   	| Nie została utworzona druga rezerwacja na tym samym urządzeniu|                   
 | Anulowanie         |     200 cancelled       	| Poprzednia rezerwacja jest już nieaktywna (is_active=0)       |            
-| Ponowne anulowanie |     200 unchanged      	| rezerwacja nadal nieaktywna                    		        |
-| Ponowna rezerwacja |     201 created      	| rezerwacja tego samego urządzenia została utworzona           |      
+| Ponowne anulowanie |     200 unchanged      	| rezerwacja nadal nieaktywna                    		|
+| Ponowna rezerwacja |     201 created      	| rezerwacja tego samego urządzenia została utworzona           | 
+
+
+===================================================================================================================
+
+Cel testu - sprawdzenie zestawienia rezerwacji każdego testera, z podziałem na łączną ilość wszystkich rezerwacji, sumę aktywnych i sumę nieaktywnych rezerwacji (z uwzględnieniem testerów bez jakiejkolwiek rezerwacji).
+
+Wynik przed anulowaniem
+Tester "Tomek" - liczba_rezerwacji = 2, suma_aktywnych_rezerwacji=1, suma_nieaktywnych_rezerwacji=1
+Testerka "Anna" - liczba_rezerwacji = 1, suma_aktywnych_rezerwacji=1, suma_nieaktywnych_rezerwacji=0
+Tester "Paweł" - liczba_rezerwacji = 0, suma_aktywnych_rezerwacji=0, suma_nieaktywnych_rezerwacji=0
+
+Proces anulacji: Włączenie serwera HTTP poprzez komendę "node index.js", wysłanie requestu PATCH na endpoint /reservations/cancel, z body {"reservation_id":9}, gdzie id = 9 jest aktywną rezerwacją testera Tomka
+
+Wynik po anulowaniu
+Tester "Tomek" - liczba_rezerwacji = 2, suma_aktywnych_rezerwacji=0, suma_nieaktywnych_rezerwacji=2
+Testerka "Anna" - liczba_rezerwacji = 1, suma_aktywnych_rezerwacji=1, suma_nieaktywnych_rezerwacji=0
+Tester "Paweł" - liczba_rezerwacji = 0, suma_aktywnych_rezerwacji=0, suma_nieaktywnych_rezerwacji=0
+
+Rezerwacje testerów Anny i Pawła nie zostały zmienione
