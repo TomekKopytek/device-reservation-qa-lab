@@ -71,3 +71,20 @@ Kroki reprodukcji:
 DO WERYFIKACJI REZULTATÓW UŻYTO QUERIES Z PLIKÓW `check-active-reservation-duplicates.sql` i `lifecycle-check.sql`.
 
 Zapytanie `check-active-reservation-duplicates.sql` zwróciło 0 wierszy - brak urządzeń z więcej niż jedną, aktywną rezerwacją.
+
+===================================================================================================================
+
+Cel testu 5. Walidacja pola `tester_id` przy tworzeniu rezerwacji.
+
+Wykorzystany request: POST http://127.0.0.1:3000/reservations
+Sprawdzone przypadki (body JSON):
+    1. Brak pola `tester_id` - {"device_id": 2} - rezultat: 400 invalid identifiers
+    2. Przesłanie wartości jako tekst w polu `tester_id`: {"device_id": 2, "tester_id": "1"} - rezultat - 400 invalid identifiers
+    3. Sprawdzenie wartości 0 i wartości ujemnych (0,-1): {"device_id": 2, "tester_id": 0} / {"device_id": 2, "tester_id": -1} - rezultat - 400 invalid identifiers
+    4. Sprawdzenie wartości zmiennoprzecinkowej (1.5): {"device_id": 2, "tester_id": 1.5} - rezultat - 400 invalid identifiers
+    5. Sprawdzenie wartości `null`: {"device_id": 2, "tester_id": null} - rezultat - 400 invalid identifiers
+
+Po każdym przypadku oczekiwano rezultatu: HTTP 400, body {"error":"Invalid identifiers"}.
+
+Przed i po każdym teście sprawdzono stan tabeli `reservations` poprzez wykonanie pliku `reservation-validation-check.sql` w SSMS.
+Stan bazy - przed i po każdym teście nie został utworzony nowy rekord w bazie danych dla urządzenia o id = 2 (device_id=2) (zwracany wynik 0 wierszy).
