@@ -45,3 +45,13 @@ Wynik po rollbacku transakcji:
 Tester "Tomek" - liczba_rezerwacji = 2, suma_aktywnych_rezerwacji=0, suma_anulowanych_rezerwacji=2
 Testerka "Anna" - liczba_rezerwacji = 1, suma_aktywnych_rezerwacji=1, suma_anulowanych_rezerwacji=0
 Tester "Paweł" - liczba_rezerwacji = 0, suma_aktywnych_rezerwacji=0, suma_anulowanych_rezerwacji=0
+
+===================================================================================================================
+
+Cel testu 3 - Sprawdzenie, czy istnieje urządzenie, które ma dwie aktywne Rezerwacje
+
+Oczekiwany wynik: 0 wierszy - brak urządzeń z dwiema aktywnymi rezerwacjami.
+
+Weryfikacja: Uruchomienie pliku `check-active-reservation-duplicates.sql` w SSMS
+
+Rzeczywisty wynik: 0 wierszy - brak naruszeń reguły.
