@@ -1,0 +1,6 @@
+use device_lab_verify
+GO
+--WERYFIKACJA ISTNIENIA AKTYWNEJ REZERWACJI 
+SELECT * FROM reservations
+
+

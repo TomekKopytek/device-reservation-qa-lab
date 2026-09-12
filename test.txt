@@ -1,0 +1,42 @@
+Cel testu 6 - Sprawdzenie walidacji procesu anulowania rezerwacji.
+
+Warunki wstępne - posiadanie aktywnej rezerwacji (w teście wykorzystano rezerwację o id = 3, która jest aktywna).
+
+Request: PATCH http://127.0.0.1:3000/reservations/cancel, z body request {"reservation_id":X}, gdzie X jest liczbą całkowitą, większą od 0.
+
+Przypadki testowe:
+    1. Sprawdzenie poprawnego cyklu anulowania rezerwacji - przewidywany wynik: statusCode = 200, "status":"cancelled", zmiana aktywnej rezerwacji na anulowaną.
+    2. Anulowanie nieaktywnej rezerwacji - przewidywany wynik: statusCode: 200, "status":"unchanged", rezerwacja o id = 3 została anulowana (is_active=0). 
+    3. Przesłanie wartości null - przewidywany wynik: statusCode: 400, "error": "Invalid JSON", brak zmiany w bazie danych. - korekta: statusCode:400, {"error":"Invalid identifiers"}
+    4. Przesłanie wartości 0 - przewidywany wynik: statusCode: 400, "error": "Invalid identifiers", brak zmiany w bazie danych.
+    5. Przesłanie wartości -1 - przewidywany wynik: statusCode: 400, "error": "Invalid identifiers", brak zmiany w bazie danych.
+    6. Przesłanie wartości tekstowej, np. "test" - przewidywany wynik: statusCode: 400, "error": "Invalid identifiers", brak zmiany w bazie danych.
+    7. Przesłanie wartości true/false, {"reservation_id": true} i {"reservation_id":false} - przewidywany wynik: statusCode: 400, "error": "Invalid identifiers", brak zmiany w bazie danych.
+    8. Przesłanie pustego stringa ({"reservation_id": ""}) - przewidywany wynik: statusCode: 400, "error": "Invalid identifiers", brak zmiany w bazie danych.
+    9. Przesłanie requesta bez body JSON - przewidywany wynik: statusCode: 400, "error": "Invalid identifiers", brak zmiany w bazie danych. Korekta: statusCode:400, {"error":"Invalid JSON"}.
+    10. Przesłanie requesta z innym parametrem niż reservation_id, np. {"tester_id":2} - przewidywany wynik: statusCode: 400, "error": "Invalid identifiers", brak zmiany w bazie danych.
+    11. Przesłanie wartości zmiennoprzecinkowej, np. 1.5 - przewidywany wynik: statusCode: 400, "error": "Invalid identifiers", brak zmiany w bazie danych.
+    12. Przesłanie dwukrotne requestu z poprawnym body JSON {"reservation_id":3} - przewidywany wynik: statusCode: 200, "status":"unchanged"
+    13. Przesłanie poprawnego requestu z poprawnym body, lecz nieistniejącym identyfikatorem - przewidywany wynik: statusCode: 500, "error":"Database error" (body JSON - {"reservation_id":15}). Korekta: statusCode: 200, {"status":"unchanged"}.
+
+Wyniki przypadków testowych:
+    1. statusCode = 200, "status":"cancelled" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została dezaktywowana. - PASS
+    2. statusCode: 200, "status":"unchanged" (w POSTMAN), w bazie danych - rezerwacja o id = 3 pozostaje nadal nieaktywna. - PASS
+    3. statusCode: 400, "error": "Invalid identifiers" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS
+    4. statusCode: 400, "error": "Invalid identifiers" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS
+    5. statusCode: 400, "error": "Invalid identifiers" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS
+    6. statusCode: 400, "error": "Invalid identifiers" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS
+    7. statusCode: 400, "error": "Invalid identifiers" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS - PO KAŻDYM PRZESŁANIU REQUESTU, WSZYSTKIE POLA BEZ ZMIAN PO PIERWSZYM I DRUGIM PRZESŁANIU.
+    8. statusCode: 400, "error": "Invalid identifiers" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS
+    9. statusCode: 400, "error": "Invalid JSON" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS
+    10. statusCode: 400, "error": "Invalid identifiers" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS
+    11. statusCode: 400, "error": "Invalid identifiers" (w POSTMAN), w bazie danych - rezerwacja o id = 3 została nienaruszona. - PASS
+    12. statusCode: 200, "status":"unchanged" po obu wysłaniach, w bazie danych - rezerwacja o id = 3 pozostaje nadal nieaktywna. - PASS
+    13. statusCode : 200, "status":"unchanged" w bazie danych - w bazie danych - 0 wierszy zostało naruszonych, rezerwacja o id = 15 nie istnieje. - PASS względem wymagań zadania 
+
+Propozycja do wyniku nr 13. Dla nieistniejącej rezerwacji zwracamy 404, a dla już anulowanej pozostawiamy 200 „unchanged”.
+
+Zweryfikowano, że w całym zestawie testów jedyną zmianą tabeli było przejście is_active rezerwacji o id = 3 z 1 na 0 w pierwszym teście. 
+
+Przed i po każdym teście wykonano weryfikację stanu bazy danych poprzez wykonanie queries zawartych w pliku `verify-reservation-cancellation.sql`
+

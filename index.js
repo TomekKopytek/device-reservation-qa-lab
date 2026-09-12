@@ -136,7 +136,6 @@ const server = http.createServer((req, res) => {
             }
         }
         catch (error) {
-            //wypisanie błędu
             res.statusCode = 400;
             res.setHeader("Content-Type", "application/json");
             res.end(JSON.stringify({ error: "Invalid JSON" }));
