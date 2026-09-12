@@ -147,3 +147,15 @@ Przypadki testowe i wyniki dla obecnego stanu bazy danych:
 
 Reprodukcja: wykonanie wszystkich zapytań zawartych w pliku `reservation-existence-checks.sql`;
 
+===================================================================================================================
+
+Cel testu 8 - Ćwiczenie pisania asercji w POSTMAN
+
+Warunki wstępne - uruchomiony serwer HTTP (node index.js), zaimportowana kolekcja `Device Lab.postman_collection+scripts.json` do Postman.
+
+Przypadki testowe:
+    1. Napisanie prostych asercji dla requestu GET na endpoint /health, które sprawdzają, czy response ma HTTP code 200 i status 'ok' - po przesłaniu requestu obie asercje zwracają status "PASSED"
+    2. Napisanie asercji dla requestu POST na endpoint /reservations, które w przypadku wysłania body JSON bez wymaganego identyfikatora (tzn. bez identyfikatora "tester_id" wraz z wartością) response ma HTTP code 400 i czy API rzeczywiście odrzuca brak wymaganego identyfikatora (error: Invalid identifiers). - po przesłaniu requestu z niepoprawnym body oba testy zwracają status "Passed"
+    3. Próba kontrolna - Oczekiwanie kodu 201 przy odpowiedzi 200 dla pierwszego przypadku testowego wywołało FAIL, a oczekiwanie "inny komunikat" przy odpowiedzi "Invalid identifiers" wywołało FAIL testu tręsci, podczas gdy test kodu 400 nadal przeszedł.
+
+Na końcu zostały przywrócone właściwe oczekiwania i końcowe wyniki każdego testu to PASSED
