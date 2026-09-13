@@ -174,3 +174,16 @@ Sprawdzone konfiguracje:
     1. Brak środowiska - wartość zmiennej kolekcji; Port 3000; wynik - 200, dwie asercje PASSED
     2. Środowisko `Device lab - lokalne`; Port 3000; wynik - 200, dwie asercje PASSED
     3. Środowisko `Device lab - próba połączenia`; Port 3001; wynik - `ECONNREFUSED`, brak odpowiedzi HTTP
+
+===================================================================================================================
+
+Utworzenie początkowej dokumentacji poprzez openapi i swagger editor dla endpointu /health + wywołanie przez Swagger UI
+
+Etapy procesu:
+    1. Przygotowanie dokumentacji w pliku `openapi.yaml` - utworzenie dokumentacji dla requestu GET na endpoint /health, sprawdzającego stan API
+    2. Wejście na https://editor.swagger.io/ i podmienienie kodu wstępnego na kod utworzony w pliku .yaml
+    3. Próbna egzekucja requestu - napotkanie błędu CORS, związanego z brakiem nagłówka
+    4. Dodanie do serwera HTTP (`index.js`) ustawienie nagłówka odpowiedzi (res.setHeader("Access-Control-Allow-Origin", "https://editor.swagger.io");)
+    5. Ponowna egzekucja requestu
+
+Wynik końcowy przesłania requestu: response code 200, body JSON {"status":"ok"} (jedyna akceptowalna wartość, zgodnie z ograniczeniem `enum` w dokumentacji)

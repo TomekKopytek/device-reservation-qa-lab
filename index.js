@@ -6,6 +6,7 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && req.url === "/health") {
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
+    res.setHeader("Access-Control-Allow-Origin", "https://editor.swagger.io");
     res.end(JSON.stringify({ status: "ok" }));
   } else if (req.method === "GET" && req.url === "/devices") {
     // Call the getDevices function from db.js

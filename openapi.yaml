@@ -1,0 +1,30 @@
+openapi: 3.0.3
+
+info:
+  title: Device Lab API
+  version: "1.0.0"
+  description: API do zarządzania rezerwacjami urządzeń.
+
+servers:
+  - url: http://127.0.0.1:3000
+
+paths:
+  /health:
+    get:
+      summary: Sprawdzenie dostępności API
+      responses:
+        "200":
+          description: API odpowiada poprawnie.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - ok
+              example:
+                status: ok     
