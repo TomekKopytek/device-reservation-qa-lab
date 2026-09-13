@@ -159,3 +159,18 @@ Przypadki testowe:
     3. Próba kontrolna - Oczekiwanie kodu 201 przy odpowiedzi 200 dla pierwszego przypadku testowego wywołało FAIL, a oczekiwanie "inny komunikat" przy odpowiedzi "Invalid identifiers" wywołało FAIL testu tręsci, podczas gdy test kodu 400 nadal przeszedł.
 
 Na końcu zostały przywrócone właściwe oczekiwania i końcowe wyniki każdego testu to PASSED
+
+===================================================================================================================
+
+Cel testu 9 - Weryfikacja działania zmiennych środowiskowych i zmiennych kolekcji w Postman.
+
+Warunki wstępne - uruchomiony serwer http, nasłuchujący na porcie 3000, zaimportowana kolekcja z dnia 13.09, a także zaimportowane dwa środowiska - `Device lab - lokalne` i `Device lab - próba połączenia`.
+
+Do kolekcji `Device lab` dodano zmienną kolekcji `base_url`, której wartością jest adres url `http://127.0.0.1:3000`. Usunięto adres w każdym requeście i wstawiono zmienną w formacie `{{base_url}}/endpoint`
+
+Testowany request: GET {{base_url}}/health
+
+Sprawdzone konfiguracje:
+    1. Brak środowiska - wartość zmiennej kolekcji; Port 3000; wynik - 200, dwie asercje PASSED
+    2. Środowisko `Device lab - lokalne`; Port 3000; wynik - 200, dwie asercje PASSED
+    3. Środowisko `Device lab - próba połączenia`; Port 3001; wynik - `ECONNREFUSED`, brak odpowiedzi HTTP

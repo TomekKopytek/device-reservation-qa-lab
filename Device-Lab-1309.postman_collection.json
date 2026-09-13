@@ -1,0 +1,287 @@
+{
+  "info": {
+    "_postman_id": "0ddeef40-2061-423b-b9ae-d4b9cfaa8f34",
+    "name": "Device Lab",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50910745",
+    "_collection_link": "https://go.postman.co/collection/50910745-0ddeef40-2061-423b-b9ae-d4b9cfaa8f34?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Testowy req",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod statusu 200\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "})\r",
+              "pm.test(\"API zwraca status 'ok'\", ()=>{\r",
+              "    pm.expect(pm.response.json().status).to.eql(\"ok\");\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Wszystkie urządzenia",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/devices",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "devices"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Wolne urządzenia",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/devices/available",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "devices",
+            "available"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Utworzenie rezerwacji - sukces",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 3,\"tester_id\": 1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Wymagane jest wpisanie za device_id identyfikatora urządzenia, które obecnie nie jest zajęte (is_active=0)."
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\":9}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - błędne id rezerwacji",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", () => {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"API zwraca error Invalid identifiers\", () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Nieistniejące urządzenie",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 999,\"tester_id\": 1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Request powinien używać wolnego urządzenia."
+      },
+      "response": []
+    },
+    {
+      "name": "Nieistniejący użytkownik",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 1,\"tester_id\": 999}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Request powinien używać wolnego urządzenia, zeby badać wyłącznie błąd testera, bez konfliktu rezerwacji."
+      },
+      "response": []
+    },
+    {
+      "name": "Rezerwacja - brak tester_id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", () => {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"API zwraca error Invalid identifiers\", () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 2}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:3000",
+      "type": "string"
+    }
+  ]
+}
