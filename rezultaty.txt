@@ -187,3 +187,81 @@ Etapy procesu:
     5. Ponowna egzekucja requestu
 
 Wynik końcowy przesłania requestu: response code 200, body JSON {"status":"ok"} (jedyna akceptowalna wartość, zgodnie z ograniczeniem `enum` w dokumentacji)
+
+===================================================================================================================
+
+Cel testu 10 - Sprawdzenie zgodności odpowiedzi POST /reservations z dokumentacją openapi
+
+Warunki wstępne: uruchomiony serwer HTTP, znajomość dokumentacji z `openapi.yaml`, zaimportowana kolekcja `Device Lab Copy.postman_collection.json` do Postman.
+
+Przypadki testowe:
+    1.  Utworzenie rezerwacji wolnego urządzenia przez istniejącego testera
+        a. Body req - {"device_id":2, "tester_id":1}
+        b. Oczekiwana odpowiedź - 201, {"status":"created"}
+    2.  Próba rezerwacji zajętego urządzenia
+        a. Body req - {"device_id":2, "tester_id":1}
+        b. Oczekiwana odpowiedź - 409, {"error":"Device is already reserved"}
+    3.  Nieistniejące urządzenie, istniejący tester
+        a. Body req - {"device_id":999,"tester_id":1}
+        b. Oczekiwana odpowiedź - 404, {"error":"Device does not exist"}
+    4.  Wolne urządzenie, nieistniejący tester
+        a. Body req - {"device_id":4,"tester_id":999}
+        b. Oczekiwana odpowiedź - 404, {"error":"Tester does not exist"}
+    5.  Brak wymaganego pola tester_id
+        a. Body req - {"device_id":2}
+        b. Oczekiwana odpowiedź - 400, {"error":"Invalid identifiers"}
+    6.  Błędna składnia JSON — brak końcowej klamry
+        a. Body req - {"device_id":2,"tester_id":1
+        b. Oczekiwana odpowiedź - 400, {"error":"Invalid JSON"}
+
+Wyniki:
+    1. 
+        a. Warunki początkowe - brak aktywnej rezerwacji na urządzeniu o id = 2
+        b. Wysłane body - {"device_id":2, "tester_id":1}
+        c. Oczekiwany wynik według OpenAPI - 201, {"status":"created"}
+        d. Rzeczywisty wynik API - 201, {"status":"created"}
+        e. Wyniki asercji - 2x PASSED (po poprawieniu błędnego zapisu pierwszej asercji)
+        f. Wynik kontroli SQL - rezerwacja o id = 18 dla urządzenia o id = 2 została utworzona i jest aktywna.
+        g. Ocena - PASS
+    2. 
+        a. Warunki początkowe - posiadanie aktywnej rezerwacji na urządzeniu o id = 2
+        b. Wysłane body - {"device_id":2, "tester_id":1}
+        c. Oczekiwany wynik według OpenAPI - 409, {"error":"Device is already reserved"}
+        d. Rzeczywisty wynik API - 409, {"error":"Device is already reserved"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Ponowna rezerwacja dla urządzenia o id = 2 nie została utworzona, pierwsza rezerwacja pozostaje aktywna, nie zostały dodane inne rekordy do tabeli
+        g. Ocena - PASS
+    3. 
+        a. Warunki początkowe - posiadanie istniejącego testera w tabeli testers, brak urządzenia o id = 999
+        b. Wysłane body - {"device_id":999, "tester_id":1}
+        c. Oczekiwany wynik według OpenAPI - 404, {"error":"Device does not exist"}
+        d. Rzeczywisty wynik API - 404, {"error":"Device does not exist"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli reservations z urządzeniem o id = 999
+        g. Ocena - PASS
+    4. 
+        a. Warunki początkowe - posiadanie istniejącego oraz wolnego urządzenia o id = 4, brak testera o id = 999
+        b. Wysłane body - {"device_id":4,"tester_id":999}
+        c. Oczekiwany wynik według OpenAPI - 404, {"error":"Tester does not exist"}
+        d. Rzeczywisty wynik API - 404, {"error":"Tester does not exist"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli reservations z testerem o id = 999
+        g. Ocena - PASS
+    5. 
+        a. Warunki początkowe - posiadanie urządzenia o id = 2
+        b. Wysłane body - {"device_id":2}
+        c. Oczekiwany wynik według OpenAPI - 400, {"error":"Invalid identifiers"}
+        d. Rzeczywisty wynik API - 400, {"error":"Invalid identifiers"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli reservations dla urządzenia o id = 2
+        g. Ocena - PASS
+    6. 
+        a. Warunki początkowe - posiadanie istniejącego urządzenia o id = 2 oraz testera o id = 1
+        b. Wysłane body - {"device_id":2,"tester_id":1
+        c. Oczekiwany wynik według OpenAPI - 400, {"error":"Invalid JSON"}
+        d. Rzeczywisty wynik API - 400, {"error":"Invalid JSON"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli reservations dla urządzenia o id = 2 i testera o id = 1
+        g. Ocena - PASS
+
+Końcowy wynik - Wszystkie sześć sprawdzonych przypadków POST /reservations dało odpowiedzi zgodne z dokumentacją OpenAPI. Wyniki kontroli SQL odpowiadały oczekiwaniom.

@@ -28,3 +28,88 @@ paths:
                       - ok
               example:
                 status: ok     
+  /reservations:
+    post:
+      summary: Utworzenie rezerwacji
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - device_id
+                - tester_id
+              properties:
+                device_id:
+                  type: integer
+                  minimum: 1
+                tester_id:
+                  type: integer
+                  minimum: 1
+            example:
+              device_id: 2
+              tester_id: 1     
+      responses:
+        "201":
+          description: Rezerwacja została utworzona.
+          content: 
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - created
+              example:
+                status: created
+        "409":
+          description: Konflikt - urządzenie jest już zarezerwowane.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - Device is already reserved
+              example:
+                error: Device is already reserved
+        "404":
+          description: Urządzenie albo tester o podanym ID nie istnieje
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - Device does not exist
+                      - Tester does not exist
+              example:
+                error: Device does not exist
+        "400":
+          description: Żądania nie spełniają wymagań albo body ma niepoprawną składnię JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - Invalid identifiers
+                      - Invalid JSON 
+              example:
+                error: Invalid identifiers
