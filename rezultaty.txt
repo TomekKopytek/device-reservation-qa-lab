@@ -265,3 +265,70 @@ Wyniki:
         g. Ocena - PASS
 
 Końcowy wynik - Wszystkie sześć sprawdzonych przypadków POST /reservations dało odpowiedzi zgodne z dokumentacją OpenAPI. Wyniki kontroli SQL odpowiadały oczekiwaniom.
+
+===================================================================================================================
+
+Cel testu 11 - Sprawdzenie zgodności odpowiedzi PATCH na endpoint /reservations/cancel z dokumentacją openapi
+
+Warunki wstępne: uruchomiony serwer HTTP, znajomość dokumentacji z `openapi.yaml`, zaimportowana kolekcja `Device Lab Copy.postman_collection_patchtesting.json` do Postman.
+
+Przypadki testowe:
+    1.  Anulowanie aktywnej rezerwacji
+        a. Body req - {"reservation_id":3}
+        b. Oczekiwana odpowiedź - 200, {"status":"cancelled"}
+    2.  Ponowne anulowanie tej samej rezerwacji
+        a. Body req - {"reservation_id":3}
+        b. Oczekiwana odpowiedź - 200, {"status":"unchanged"}
+    3.  Anulowanie nieistniejącej rezerwacji
+        a. Body req - {"reservation_id":999}
+        b. Oczekiwana odpowiedź - 200, {"status":"unchanged"}
+    4.  Brak `reservation_id`
+        a. Body req - {}
+        b. Oczekiwana odpowiedź - 400, {"error":"Invalid identifiers"}
+    5.  Błędna składnia JSON
+        a. Body req - {"reservation_id":3
+        b. Oczekiwana odpowiedź - 400, {"error":"Invalid JSON"}
+
+Wyniki:
+    1. 
+        a. Warunki początkowe - istniejąca aktywna rezerwacja o id = 3.
+        b. Wysłane body - {"reservation_id":3}
+        c. Oczekiwany wynik według OpenAPI - 200, {"status":"cancelled"}
+        d. Rzeczywisty wynik API - 200, {"status":"cancelled"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - rezerwacja o id = 3 została anulowana. Wartość is_active zmieniła się z 1 na 0, a rekord pozostał w tabeli.
+        g. Ocena - PASS
+    2. 
+        a. Warunki początkowe - istniejąca anulowana rezerwacja o id = 3.
+        b. Wysłane body - {"reservation_id":3}
+        c. Oczekiwany wynik według OpenAPI - 200, {"status":"unchanged"}
+        d. Rzeczywisty wynik API - 200, {"status":"unchanged"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Rezerwacja o id = 3 pozostała w tabeli z is_active = 0. Pozostałe rekordy nie uległy zmianie.
+        g. Ocena - PASS
+    3. 
+        a. Warunki początkowe - Brak istniejącej (anulowanej/aktywnej) rezerwacji o id = 999
+        b. Wysłane body - {"reservation_id":999}
+        c. Oczekiwany wynik według OpenAPI - 200, {"status":"unchanged"}
+        d. Rzeczywisty wynik API - 200, {"status":"unchanged"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - brak nowego rekordu w tabeli `reservations` o id = 999, pozostałe rekordy zostały niezmienione.
+        g. Ocena - PASS
+    4. 
+        a. Warunki początkowe - brak
+        b. Wysłane body - {}
+        c. Oczekiwany wynik według OpenAPI - 400, {"error":"Invalid identifiers"}
+        d. Rzeczywisty wynik API - 400, {"error":"Invalid identifiers"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - brak nowego rekordu w tabeli `reservations`, pozostałe rekordy zostały niezmienione.
+        g. Ocena - PASS
+    5. 
+        a. Warunki początkowe - brak
+        b. Wysłane body - {"reservation_id":3
+        c. Oczekiwany wynik według OpenAPI - 400, {"error":"Invalid JSON"}
+        d. Rzeczywisty wynik API - 400, {"error":"Invalid JSON"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli `reservations`, pozostałe rekordy zostały niezmienione.
+        g. Ocena - PASS
+
+Końcowy wynik - Wszystkie pięć sprawdzonych przypadków PATCH /reservations/cancel dało odpowiedzi zgodne z dokumentacją OpenAPI. Wyniki kontroli SQL odpowiadały oczekiwaniom.

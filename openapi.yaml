@@ -113,3 +113,60 @@ paths:
                       - Invalid JSON 
               example:
                 error: Invalid identifiers
+  /reservations/cancel:
+    patch:
+      summary: Anulowanie rezerwacji
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reservation_id
+              properties:
+                reservation_id:
+                  type: integer
+                  minimum: 1
+            example:
+              reservation_id: 1
+      responses:
+        "200":
+          description: Rezerwacja została anulowana albo nie wymagała zmiany.                               
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - cancelled
+                      - unchanged
+              examples:
+                cancelled:
+                  summary: Anulowano aktywną rezerwację
+                  value:
+                    status: cancelled
+                unchanged:
+                  summary: Rezerwacja nie istnieje lub jest już anulowana
+                  value:
+                    status: unchanged
+        "400":
+          description: Żądania nie spełniają wymagań albo body ma niepoprawną składnię JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - Invalid identifiers
+                      - Invalid JSON
+              example:
+                error: Invalid identifiers
