@@ -270,7 +270,7 @@ Końcowy wynik - Wszystkie sześć sprawdzonych przypadków POST /reservations d
 
 Cel testu 11 - Sprawdzenie zgodności odpowiedzi PATCH na endpoint /reservations/cancel z dokumentacją openapi
 
-Warunki wstępne: uruchomiony serwer HTTP, znajomość dokumentacji z `openapi.yaml`, zaimportowana kolekcja `Device Lab Copy.postman_collection_patchtesting.json` do Postman.
+Warunki wstępne: uruchomiony serwer HTTP, znajomość dokumentacji z `openapi.yaml`, zaimportowana kolekcja `Device Lab Copy.postman_collection_patchtesting_added4requests.json` do Postman.
 
 Przypadki testowe:
     1.  Anulowanie aktywnej rezerwacji
@@ -288,6 +288,18 @@ Przypadki testowe:
     5.  Błędna składnia JSON
         a. Body req - {"reservation_id":3
         b. Oczekiwana odpowiedź - 400, {"error":"Invalid JSON"}
+    6.  Wartość poniżej minimum 1
+        a. Body req - {"reservation_id":0}
+        b. Oczekiwana odpowiedź - 400, {"error":"Invalid identifiers"}
+    7.  Wartość jako liczba ujemna
+        a. Body req - {"reservation_id": -1}
+        b. Oczekiwana odpowiedź - 400, {"error":"Invalid identifiers"}
+    8.  Wartość jako liczba niecałkowita
+        a. Body req - {"reservation_id":1.5}
+        b. Oczekiwana odpowiedź - 400, {"error":"Invalid identifiers"}
+    9.  Wartość jako tekst
+        a. Body req - {"reservation_id":"3"}
+        b. Oczekiwana odpowiedź - 400, {"error":"Invalid identifiers"}
 
 Wyniki:
     1. 
@@ -330,5 +342,37 @@ Wyniki:
         e. Wyniki asercji - 2x PASSED
         f. Wynik kontroli SQL - Brak nowego rekordu w tabeli `reservations`, pozostałe rekordy zostały niezmienione.
         g. Ocena - PASS
+    6. 
+        a. Warunki początkowe - brak
+        b. Wysłane body - {"reservation_id":0}
+        c. Oczekiwany wynik według OpenAPI - 400, {"error":"Invalid identifiers"}
+        d. Rzeczywisty wynik API - 400, {"error":"Invalid identifiers"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli `reservations`, pozostałe rekordy zostały niezmienione.
+        g. Ocena - PASS
+    7. 
+        a. Warunki początkowe - brak
+        b. Wysłane body - {"reservation_id":-1}
+        c. Oczekiwany wynik według OpenAPI - 400, {"error":"Invalid identifiers"}
+        d. Rzeczywisty wynik API - 400, {"error":"Invalid identifiers"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli `reservations`, pozostałe rekordy zostały niezmienione.
+        g. Ocena - PASS
+    8. 
+        a. Warunki początkowe - brak
+        b. Wysłane body - {"reservation_id":1.5}
+        c. Oczekiwany wynik według OpenAPI - 400, {"error":"Invalid identifiers"}
+        d. Rzeczywisty wynik API - 400, {"error":"Invalid identifiers"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli `reservations`, pozostałe rekordy zostały niezmienione.
+        g. Ocena - PASS
+    9. 
+        a. Warunki początkowe - brak
+        b. Wysłane body - {"reservation_id":"3"}
+        c. Oczekiwany wynik według OpenAPI - 400, {"error":"Invalid identifiers"}
+        d. Rzeczywisty wynik API - 400, {"error":"Invalid identifiers"}
+        e. Wyniki asercji - 2x PASSED
+        f. Wynik kontroli SQL - Brak nowego rekordu w tabeli `reservations`, pozostałe rekordy zostały niezmienione.
+        g. Ocena - PASS
 
-Końcowy wynik - Wszystkie pięć sprawdzonych przypadków PATCH /reservations/cancel dało odpowiedzi zgodne z dokumentacją OpenAPI. Wyniki kontroli SQL odpowiadały oczekiwaniom.
+Końcowy wynik - Wszystkie dziewięć sprawdzonych przypadków PATCH /reservations/cancel dało odpowiedzi zgodne z dokumentacją OpenAPI. Wyniki kontroli SQL odpowiadały oczekiwaniom.
