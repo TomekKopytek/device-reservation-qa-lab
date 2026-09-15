@@ -389,7 +389,7 @@ Sprawdzane kroki i oczekiwane odpowiedzi:
     3. Anulowanie rezerwacji z zmiennej: odpowiedź: 200 "cancelled", 2 testy Passed
     4. Anulowanie rezerwacji - status unchanged: odpowiedź: 200 "unchanged", 2 testy Passed
 
-Przed i po każdym krokiem został zweryfikowany tabeli `reservations` w bazie danych, tylko krok 1 i 3 zmieniły stan jednego, określonego przez zmienną `reservation_id` rekordu  
+Przed pierwszym i po ostatnim kroku został zweryfikowany stan tabeli `reservations` w bazie danych, tylko krok 1 i 3 zmieniły stan jednego, określonego przez zmienną `reservation_id` rekordu  
 
 Kroki reprodukcji  
     1. Import kolekcji `Device_lab_reservation_directory.json do Postmana
@@ -400,5 +400,21 @@ Sposób przekazania ID z POST do PATCH
 
 Wyniki dwóch iteracji z collection runnera:
     9 testów passed na iterację (łącznie 18), za każdym cykl rezerwacji zadziałał zgodnie z oczekiwaniem.
+
+===================================================================================================================
+
+Cel testu 13. Weryfikacja list urządzń i dostępności w cyklu rezerwacji.
+
+Warunki wstępne: Uruchomiony serwer http, zaimportowana kolekcja `Postman_v2_1509.json`.
+
+Sprawdzone requesty:
+    Sprawdzono endpointy GET /devices oraz GET /devices/available. Testy obejmowały kod odpowiedzi 200, strukturę tablicy JSON, dodatnie całkowite identyfikatory oraz niepuste nazwy tekstowe. Dla /devices potwierdzono również cztery urządzenia i nazwę urządzenia o ID 1. Lista dostępnych urządzeń była zgodna z wynikiem zapytania SQL i zawierała urządzenia 1 oraz 4.
+    Rozszerzono cykl rezerwacji o sprawdzenie dostępności urządzenia 4 przed utworzeniem rezerwacji, po jej utworzeniu oraz po anulowaniu. Urządzenie znikało z listy dostępnych po rezerwacji i wracało po anulowaniu.
+
+Collection Runner wykonał dwie iteracje: 48 testów PASSED, 0 FAILED. Końcowa kontrola SQL potwierdziła brak aktywnej rezerwacji urządzenia 4 i jego ponowną dostępność.
+
+Uzupełniono dokumentację OpenAPI. Odpowiedzi 500 oraz przypadek pustej listy dostępnych urządzeń nie zostały jeszcze przetestowane.
+
+Wynik końcowy: PASS w sprawdzonym zakresie.
 
 

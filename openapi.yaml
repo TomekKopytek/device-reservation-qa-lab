@@ -175,3 +175,81 @@ paths:
                       - Invalid JSON
               example:
                 error: Invalid identifiers
+  /devices:
+    get:
+      summary: Pobranie listy wszystkich urządzeń
+      responses:
+        "200":
+          description: Lista urządzeń została pobrana.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - identyfikator
+                    - nazwa_urządzenia
+                  properties:
+                    identyfikator:
+                      type: integer
+                      minimum: 1
+                    nazwa_urządzenia:
+                      type: string
+              example:
+                - identyfikator: 1
+                  nazwa_urządzenia: "PC testowy 01"
+        "500":
+          description: Błąd bazy danych.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - Database error
+              example:
+                error: Database error
+  /devices/available:
+    get:
+      summary: Pobranie listy wolnych urządzeń (bez aktywnej rezerwacji).
+      responses:
+        "200":
+          description: Lista wolnych urządzeń została pobrana.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - identyfikator
+                    - nazwa_urządzenia
+                  properties:
+                    identyfikator:
+                      type: integer
+                      minimum: 1
+                    nazwa_urządzenia: 
+                      type: string
+              example:
+                - identyfikator: 1
+                  nazwa_urządzenia: "PC testowy 01"
+        "500":
+          description: Błąd bazy danych.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - Database error
+              example:
+                error: Database error

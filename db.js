@@ -19,7 +19,13 @@ function getDevices() {
         );
     })
     .then((result) => {
-      return result.recordset;
+      const resultAltered = result.recordset.map((device) => {
+        return {
+          identyfikator: Number(device.identyfikator),
+          nazwa_urządzenia: device.nazwa_urządzenia
+        }
+      })
+      return resultAltered;
     });
 }
 
@@ -34,7 +40,13 @@ function getAvailableDevices() {
         );
     })
     .then((result) => {
-      return result.recordset;
+      const resultAltered = result.recordset.map((availableDevice) => {
+        return {
+          identyfikator: Number(availableDevice.identyfikator),
+          nazwa_urządzenia: availableDevice.nazwa_urządzenia
+        }
+      })
+      return resultAltered;
     });
 }
 
