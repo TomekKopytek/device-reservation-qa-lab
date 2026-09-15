@@ -48,10 +48,13 @@ const server = http.createServer((req, res) => {
             if (Number.isInteger(obiektBody.device_id) && obiektBody.device_id > 0 && Number.isInteger(obiektBody.tester_id) && obiektBody.tester_id > 0){
                 console.log(obiektBody.device_id + " " + obiektBody.tester_id)
                 createReservation(obiektBody.device_id, obiektBody.tester_id)
-                    .then(() => {
+                    .then((result) => {
+                        const reservationId = Number(result.recordset[0].reservation_id);
+                        console.log("Reservation created with ID: " + reservationId);
+                        console.log("Type of id: " + typeof reservationId);
                         res.statusCode = 201;
                         res.setHeader("Content-Type", "application/json");
-                        res.end(JSON.stringify({ "status" : "created" }));
+                        res.end(JSON.stringify({ "status" : "created", reservation_id: reservationId }));
                     })
                     .catch((error) => {
                         console.dir(error, { depth: null });

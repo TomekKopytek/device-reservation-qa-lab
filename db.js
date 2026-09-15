@@ -45,7 +45,7 @@ function createReservation(deviceId, testerId) {
       .input("deviceId", sql.Int, deviceId)
       .input("testerId", sql.Int, testerId)
       .query(
-        "INSERT INTO reservations(device_id,tester_id,is_active) VALUES (@deviceId,@testerId,1)",
+        "INSERT INTO reservations(device_id,tester_id,is_active) OUTPUT INSERTED.id as reservation_id VALUES (@deviceId,@testerId,1)",
       );
   });
 }

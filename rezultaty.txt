@@ -376,3 +376,29 @@ Wyniki:
         g. Ocena - PASS
 
 Końcowy wynik - Wszystkie dziewięć sprawdzonych przypadków PATCH /reservations/cancel dało odpowiedzi zgodne z dokumentacją OpenAPI. Wyniki kontroli SQL odpowiadały oczekiwaniom.
+
+===================================================================================================================
+
+Cel testu 12 - Sprawdzenie pełnego cyklu rezerwacji - utworzenie, konflikt, anulowanie, ponowna anulacja.
+
+Warunki wstępne: wolne urządzenie o id = 4, istniejący tester o id = 1, uruchomiony serwer HTTP, zaimportowana kolekcja `Device_lab_reservation_directory.json`
+
+Sprawdzane kroki i oczekiwane odpowiedzi:
+    1. Utworzenie rezerwacji - sukces: odpowiedź 201 "created", 3 testy PASSED, ustawienie zmiennej kolekcji "reservation_id"
+    2. Utworzenie rezerwacji - konflikt: odpowiedź 409 "Device is already reserved", 2 testy PASSED
+    3. Anulowanie rezerwacji z zmiennej: odpowiedź: 200 "cancelled", 2 testy Passed
+    4. Anulowanie rezerwacji - status unchanged: odpowiedź: 200 "unchanged", 2 testy Passed
+
+Przed i po każdym krokiem został zweryfikowany tabeli `reservations` w bazie danych, tylko krok 1 i 3 zmieniły stan jednego, określonego przez zmienną `reservation_id` rekordu  
+
+Kroki reprodukcji  
+    1. Import kolekcji `Device_lab_reservation_directory.json do Postmana
+    2. Uruchomienie collection runnera na folderze `cykl rezerwacji`.
+
+Sposób przekazania ID z POST do PATCH
+    Zmienna `reservation_id` została utworzona w ostatniej asercji pierwszego kroku. Po jej utworzeniu zmienna ta pojawia się w sekcji `variables`, w menu kolekcji. Następnie, do każdego requestu PATCH, w body zagnieżdżono tą samą zmienną w wartości klucza "reservation_id" w notacji {"reservation_id":{{reservation_id}}}
+
+Wyniki dwóch iteracji z collection runnera:
+    9 testów passed na iterację (łącznie 18), za każdym cykl rezerwacji zadziałał zgodnie z oczekiwaniem.
+
+

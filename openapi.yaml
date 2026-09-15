@@ -59,13 +59,18 @@ paths:
                 type: object
                 required:
                   - status
+                  - reservation_id
                 properties:
                   status:
                     type: string
                     enum:
                       - created
+                  reservation_id:
+                    type: integer
+                    minimum: 1
               example:
                 status: created
+                reservation_id: 32
         "409":
           description: Konflikt - urządzenie jest już zarezerwowane.
           content:
