@@ -417,4 +417,16 @@ Uzupełniono dokumentację OpenAPI. Odpowiedzi 500 oraz przypadek pustej listy d
 
 Wynik końcowy: PASS w sprawdzonym zakresie.
 
+===================================================================================================================
+
+Test 14 - Pusta lista dostępnych urządzeń i niedostępność bazy
+
+Po zarezerwowaniu wszystkich urządzeń GET /devices/available zwrócił 200 i pustą tablicę []. Wszystkie trzy testy przeszły, a SQL potwierdził brak wolnych urządzeń. Następnie anulowano rezerwacje 56 i 57, przywracając dostępność urządzeń 1 i 4.
+
+Po zatrzymaniu usługi SQL Server endpoint zwrócił 500 oraz {"error":"Database error"}. Oba testy przeszły. Czas odpowiedzi wyniósł 30,01 s.
+
+Po ponownym uruchomieniu bazy endpoint zwrócił 200 i urządzenia 1 oraz 4; cztery testy przeszły.
+
+Wynik: PASS w sprawdzonym zakresie.
+
 
