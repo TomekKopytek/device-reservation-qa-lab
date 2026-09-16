@@ -1,0 +1,4 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1789555598489,51,GET dostępne urządzenia,200,OK,Thread Group 1-1,text,true,,269,135,1,1,http://127.0.0.1:3000/devices/available,49,0,9
+1789555598541,1,GET dostępne urządzenia,200,OK,Thread Group 1-1,text,true,,269,135,1,1,http://127.0.0.1:3000/devices/available,1,0,0
+1789555598543,1,GET dostępne urządzenia,200,OK,Thread Group 1-1,text,true,,269,135,1,1,http://127.0.0.1:3000/devices/available,1,0,0
