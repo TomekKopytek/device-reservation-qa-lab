@@ -431,7 +431,7 @@ Wynik: PASS w sprawdzonym zakresie.
 
 ===================================================================================================================
 
-Test 15 - Obciążenie GET /devices/available
+Cel testu 15 - Obciążenie GET /devices/available
 
 Celem testu było sprawdzenie czasów odpowiedzi i liczby błędów podczas równoczesnego pobierania listy dostępnych urządzeń.
 
@@ -454,4 +454,16 @@ W obu przebiegach wszystkie żądania przeszły asercję HTTP 200. Przy zwiększ
 W badanych warunkach większa liczba użytkowników nie zwiększyła przepustowości. Wyniki dotyczą lokalnego środowiska i nie określają maksymalnej wydajności API ani przyczyny ograniczenia. Nie ustalono progów akceptacji czasów odpowiedzi, dlatego potwierdzono brak błędów HTTP, bez oceny spełnienia wymagań wydajnościowych.
 
 Plany testów zapisano w plikach .jmx, wyniki w .jtl, a raporty HTML wygenerowano za pomocą JMetera.
+
+===================================================================================================================
+
+Cel testu 16 - Równoczesna rezerwacja jednego urządzenia
+
+W Apache JMeter uruchomiono 10 użytkowników, z których każdy wysłał jedno żądanie POST /reservations dla urządzenia 4 i testera 1. Synchronizing Timer synchronizował wysłanie żądań.
+
+Otrzymano jedną odpowiedź HTTP 201 oraz dziewięć odpowiedzi HTTP 409. Po poprawieniu konfiguracji asercji wszystkie żądania przeszły walidację. Pierwszy przebieg wykazał błąd testu: oba oczekiwane kody wpisano w jednej komórce zamiast w dwóch osobnych wierszach.
+
+W bazie zweryfikowano utworzoną rezerwację 68. Po zakończeniu testu anulowano ją i potwierdzono ponowną dostępność urządzenia 4.
+
+Wynik: PASS dla badanego scenariusza. Równoczesne próby zakończyły się utworzeniem jednej rezerwacji i odrzuceniem pozostałych jako konfliktów.
 

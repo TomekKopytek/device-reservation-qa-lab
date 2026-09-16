@@ -1,0 +1,81 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1789557603423,72,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-1,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,70,0,12
+1789557603423,72,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-6,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,70,0,12
+1789557603423,72,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-3,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,70,0,12
+1789557603423,72,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-7,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,70,0,12
+1789557603423,72,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-2,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,70,0,12
+1789557603423,72,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-5,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,70,0,12
+1789557603423,73,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-4,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,73,0,12
+1789557603423,72,POST równoczesna rezerwacja,201,Created,Thread Group 1-8,text,false,"Test failed: code expected something using /
+
+****** received  : 201[[[    ]]]
+
+****** comparison: 201[[[
+409]]]
+
+/	",200,212,10,10,http://127.0.0.1:3000/reservations,71,0,12
+1789557603423,72,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-9,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,70,0,12
+1789557603423,72,POST równoczesna rezerwacja,409,Conflict,Thread Group 1-10,text,false,"Test failed: code expected something using /
+
+****** received  : [[[4    ]]]09
+
+****** comparison: [[[201
+4]]]09
+
+/	",199,212,10,10,http://127.0.0.1:3000/reservations,72,0,12
