@@ -429,4 +429,29 @@ Po ponownym uruchomieniu bazy endpoint zwrócił 200 i urządzenia 1 oraz 4; czt
 
 Wynik: PASS w sprawdzonym zakresie.
 
+===================================================================================================================
+
+Test 15 - Obciążenie GET /devices/available
+
+Celem testu było sprawdzenie czasów odpowiedzi i liczby błędów podczas równoczesnego pobierania listy dostępnych urządzeń.
+
+Testy wykonano lokalnie w Apache JMeter 5.6.3, w trybie konsolowym. Każdy przebieg trwał 60 sekund, z czasem uruchamiania użytkowników (ramp-up) wynoszącym 5 sekund. Żądania powtarzano bez dodatkowych przerw. Asercja sprawdzała kod odpowiedzi HTTP 200.
+----------------------------------------------------------------------
+| Wskaźnik                   |   10 użytkowników |   20 użytkowników |
+| -------------------------- | ----------------: | ----------------: |
+| Liczba żądań               |           195 672 |           187 903 |
+| Liczba błędów              |                 0 |                 0 |
+| Średni czas odpowiedzi     |           2,93 ms |           6,11 ms |
+| Mediana                    |              3 ms |              6 ms |
+| p95                        |              4 ms |              7 ms |
+| p99                        |              5 ms |             10 ms |
+| Maksymalny czas odpowiedzi |             48 ms |             54 ms |
+| Przepustowość              | 3263,05 żądania/s | 3133,39 żądania/s |
+----------------------------------------------------------------------
+
+W obu przebiegach wszystkie żądania przeszły asercję HTTP 200. Przy zwiększeniu liczby użytkowników z 10 do 20 średni czas odpowiedzi wzrósł około dwukrotnie, a przepustowość spadła o około 4%.
+
+W badanych warunkach większa liczba użytkowników nie zwiększyła przepustowości. Wyniki dotyczą lokalnego środowiska i nie określają maksymalnej wydajności API ani przyczyny ograniczenia. Nie ustalono progów akceptacji czasów odpowiedzi, dlatego potwierdzono brak błędów HTTP, bez oceny spełnienia wymagań wydajnościowych.
+
+Plany testów zapisano w plikach .jmx, wyniki w .jtl, a raporty HTML wygenerowano za pomocą JMetera.
 
