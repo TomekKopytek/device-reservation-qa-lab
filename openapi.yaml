@@ -118,6 +118,21 @@ paths:
                       - Invalid JSON 
               example:
                 error: Invalid identifiers
+        "500":
+          description: Błąd bazy danych.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - Database error
+              example:
+                error: Database error
   /reservations/cancel:
     patch:
       summary: Anulowanie rezerwacji
@@ -175,6 +190,21 @@ paths:
                       - Invalid JSON
               example:
                 error: Invalid identifiers
+        "500":
+          description: Błąd bazy danych.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    enum:
+                      - Database error
+              example:
+                error: Database error
   /devices:
     get:
       summary: Pobranie listy wszystkich urządzeń

@@ -45,7 +45,9 @@ const server = http.createServer((req, res) => {
     req.on("end", () => {
         try {
             const obiektBody = JSON.parse(body);
-            if (Number.isInteger(obiektBody.device_id) && obiektBody.device_id > 0 && Number.isInteger(obiektBody.tester_id) && obiektBody.tester_id > 0){
+            if(typeof obiektBody === 'object' && obiektBody!==null && !Array.isArray(obiektBody))
+            {
+                if (Number.isInteger(obiektBody.device_id) && obiektBody.device_id > 0 && Number.isInteger(obiektBody.tester_id) && obiektBody.tester_id > 0){
                 console.log(obiektBody.device_id + " " + obiektBody.tester_id)
                 createReservation(obiektBody.device_id, obiektBody.tester_id)
                     .then((result) => {
@@ -89,12 +91,18 @@ const server = http.createServer((req, res) => {
                             res.end(JSON.stringify({ error: "Database error" }));
                         }
                     })
+                }
+                else {
+                    res.statusCode = 400;
+                    res.setHeader("Content-Type", "application/json");
+                    res.end(JSON.stringify({ error: "Invalid identifiers" }));
+                }
             }
             else {
-                res.statusCode = 400;
-                res.setHeader("Content-Type", "application/json");
-                res.end(JSON.stringify({ error: "Invalid identifiers" }));
-            }  
+                res.statusCode=400;
+                res.setHeader("Content-type","application/json");
+                res.end(JSON.stringify({error: "Invalid identifiers"}))
+            }
         } catch (error) {
             res.statusCode = 400;
             res.setHeader("Content-Type", "application/json");
@@ -112,7 +120,8 @@ const server = http.createServer((req, res) => {
     req.on("end", () => {
         try {
             const obiektBody = JSON.parse(body);
-            if (Number.isInteger(obiektBody.reservation_id) && obiektBody.reservation_id > 0){
+            if (typeof obiektBody === 'object' && obiektBody!==null && !Array.isArray(obiektBody)) {
+                if (Number.isInteger(obiektBody.reservation_id) && obiektBody.reservation_id > 0){
                 cancelReservation(obiektBody.reservation_id)
                     .then((result) => {
                         if (result.rowsAffected[0] === 0) {
@@ -137,6 +146,12 @@ const server = http.createServer((req, res) => {
                 res.statusCode = 400;
                 res.setHeader("Content-Type", "application/json");
                 res.end(JSON.stringify({ error: "Invalid identifiers" }));
+            }
+            }
+            else {
+                res.statusCode = 400;
+                res.setHeader("Content-type", "application/json");
+                res.end(JSON.stringify({error: "Invalid identifiers"}))
             }
         }
         catch (error) {

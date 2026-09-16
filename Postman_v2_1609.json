@@ -1,0 +1,1494 @@
+{
+  "info": {
+    "_postman_id": "52a34eac-7edc-48dc-9371-d5f658853293",
+    "name": "Device Lab Copy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50910745",
+    "_collection_link": "https://go.postman.co/collection/50910745-52a34eac-7edc-48dc-9371-d5f658853293?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Cykl rezerwacji",
+      "item": [
+        {
+          "name": "Wolne urządzenia Copy - przed utworzeniem rezerwacji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"API zwraca kod 200\", ()=>{\r",
+                  "    pm.response.to.have.status(200)\r",
+                  "})\r",
+                  "\r",
+                  "let body = pm.response.json()\r",
+                  "\r",
+                  "pm.test(\"API zwraca tablicę\", ()=> {\r",
+                  "    pm.expect(Array.isArray(body)).to.be.true\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Każdy element tablicy ma dodatni, całkowity identyfikator\", ()=>{\r",
+                  "    body.forEach((element) => {\r",
+                  "        pm.expect(element.identyfikator).to.be.above(0)\r",
+                  "        pm.expect(Number.isInteger(element.identyfikator)).to.be.true\r",
+                  "    })\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Każdy element ma niepustą nazwę tekstową\", ()=>{\r",
+                  "    body.forEach((element)=> {\r",
+                  "        pm.expect(element.nazwa_urządzenia).to.be.a('string')\r",
+                  "        pm.expect(element.nazwa_urządzenia.trim().length).to.be.above(0)\r",
+                  "    })\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Czy istnieje urządzenie o id = 4\", ()=>{\r",
+                  "    pm.expect(body.find(element => element.identyfikator === 4)).to.not.eql(undefined)\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/devices/available",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "available"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Utworzenie rezerwacji - sukces Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"API zwraca kod 201\",() => {\r",
+                  "    pm.response.to.have.status(201)\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"API zwraca odpowiedź 'created'\", ()=> {\r",
+                  "    pm.expect(pm.response.json().status).to.eql(\"created\")\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"API zwraca dodatnie całkowite reservation_id\", ()=>{\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(Number.isInteger(body.reservation_id)).to.eql(true)\r",
+                  "    pm.expect(body.reservation_id).to.be.above(0)\r",
+                  "\r",
+                  "    pm.collectionVariables.set(\"reservation_id\", body.reservation_id)\r",
+                  "})\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"device_id\": 4,\"tester_id\": 1}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Wymagane jest wpisanie za device_id identyfikatora urządzenia, które obecnie nie jest zajęte (is_active=0)."
+          },
+          "response": []
+        },
+        {
+          "name": "Wolne urządzenia - po utworzeniu rezerwacji, przed konfliktem",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"API zwraca kod 200\", ()=>{\r",
+                  "    pm.response.to.have.status(200)\r",
+                  "})\r",
+                  "\r",
+                  "let body = pm.response.json()\r",
+                  "\r",
+                  "pm.test(\"API zwraca tablicę\", ()=> {\r",
+                  "    pm.expect(Array.isArray(body)).to.be.true\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Każdy element tablicy ma dodatni, całkowity identyfikator\", ()=>{\r",
+                  "    body.forEach((element) => {\r",
+                  "        pm.expect(element.identyfikator).to.be.above(0)\r",
+                  "        pm.expect(Number.isInteger(element.identyfikator)).to.be.true\r",
+                  "    })\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Każdy element ma niepustą nazwę tekstową\", ()=>{\r",
+                  "    body.forEach((element)=> {\r",
+                  "        pm.expect(element.nazwa_urządzenia).to.be.a('string')\r",
+                  "        pm.expect(element.nazwa_urządzenia.trim().length).to.be.above(0)\r",
+                  "    })\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Urządzenie 4 nie jest dostępne po rezerwacji\", ()=>{\r",
+                  "    pm.expect(body.find(element => element.identyfikator === 4)).to.eql(undefined)\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/devices/available",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "available"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Utworzenie rezerwacji - konflikt Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"API zwraca 409\", ()=> {\r",
+                  "    pm.response.to.have.status(409)\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"API zwraca error: Device is already reserved\", () => {\r",
+                  "    let body = pm.response.json()\r",
+                  "    pm.expect(body.error).to.eql(\"Device is already reserved\")\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"device_id\": 4,\"tester_id\": 1}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Urządzenie wskazane przez `device_id` musi mieć aktywną rezerwację, a tester musi istnieć."
+          },
+          "response": []
+        },
+        {
+          "name": "Anulowanie rezerwacji ze zmiennej Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"API zwraca kod 200\", ()=> {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"API zwraca status 'cancelled' przy sukcesie anulowania rezerwacji\", ()=>{\r",
+                  "    let body = pm.response.json();\r",
+                  "    pm.expect(body.status).to.eql(\"cancelled\")\r",
+                  "})\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reservation_id\": {{reservation_id}}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservations/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservations",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Wolne urządzenia - po anulowaniu, przed ponownym anulowaniem",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"API zwraca kod 200\", ()=>{\r",
+                  "    pm.response.to.have.status(200)\r",
+                  "})\r",
+                  "\r",
+                  "let body = pm.response.json()\r",
+                  "\r",
+                  "pm.test(\"API zwraca tablicę\", ()=> {\r",
+                  "    pm.expect(Array.isArray(body)).to.be.true\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Każdy element tablicy ma dodatni, całkowity identyfikator\", ()=>{\r",
+                  "    body.forEach((element) => {\r",
+                  "        pm.expect(element.identyfikator).to.be.above(0)\r",
+                  "        pm.expect(Number.isInteger(element.identyfikator)).to.be.true\r",
+                  "    })\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Każdy element ma niepustą nazwę tekstową\", ()=>{\r",
+                  "    body.forEach((element)=> {\r",
+                  "        pm.expect(element.nazwa_urządzenia).to.be.a('string')\r",
+                  "        pm.expect(element.nazwa_urządzenia.trim().length).to.be.above(0)\r",
+                  "    })\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Czy istnieje urządzenie o id = 4\", ()=>{\r",
+                  "    pm.expect(body.find(element => element.identyfikator === 4)).to.not.eql(undefined)\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/devices/available",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devices",
+                "available"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Anulowanie rezerwacji - status unchanged Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"API zwraca kod 200\", ()=> {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"API zwraca odpowiedź 'unchanged' przy próbie anulowania rezerwacji, która już jest anulowana\", ()=> {\r",
+                  "    let body = pm.response.json()\r",
+                  "    pm.expect(body.status).to.eql(\"unchanged\")\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reservation_id\": {{reservation_id}}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/reservations/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reservations",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Testowy req",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod statusu 200\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "})\r",
+              "pm.test(\"API zwraca status 'ok'\", ()=>{\r",
+              "    pm.expect(pm.response.json().status).to.eql(\"ok\");\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Wszystkie urządzenia",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 200\",()=>{\r",
+              "    \r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              "\r",
+              "const body = pm.response.json()\r",
+              "\r",
+              "pm.test(\"API zwraca tablicę\", ()=>{\r",
+              "    pm.expect(Array.isArray(body)).to.eql(true)\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Tablica zawiera cztery urządzenia\", ()=>{\r",
+              "    pm.expect(body.length).to.eql(4)\r",
+              "})\r",
+              "\r",
+              "let device1 = body.find((device) => device.identyfikator === 1)\r",
+              "\r",
+              "pm.test(\"Sprawdzenie nazwy urządzenia o id 1\", ()=>{\r",
+              "    pm.expect(device1).to.not.eql(undefined)\r",
+              "    pm.expect(device1.nazwa_urządzenia).to.eql(\"PC testowy 01\")\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Każde urządzenie ma niepustą nazwę tekstową\", ()=>{\r",
+              "    body.forEach(device=>{\r",
+              "        pm.expect(device.nazwa_urządzenia).to.be.a('string')\r",
+              "        pm.expect(device.nazwa_urządzenia.trim().length).to.be.above(0)\r",
+              "    })\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Każde urządzenie ma dodatni całkowity identyfikator\", ()=> {\r",
+              "    body.forEach(device => {\r",
+              "        pm.expect(device.identyfikator).to.be.above(0)\r",
+              "        pm.expect(Number.isInteger(device.identyfikator)).to.be.true\r",
+              "    })\r",
+              "})\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/devices",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "devices"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Wolne urządzenia",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 200\", ()=>{\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              "\r",
+              "let body = pm.response.json()\r",
+              "\r",
+              "pm.test(\"API zwraca tablicę\", ()=> {\r",
+              "    pm.expect(Array.isArray(body)).to.be.true\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Każdy element tablicy ma dodatni, całkowity identyfikator\", ()=>{\r",
+              "    body.forEach((element) => {\r",
+              "        pm.expect(element.identyfikator).to.be.above(0)\r",
+              "        pm.expect(Number.isInteger(element.identyfikator)).to.be.true\r",
+              "    })\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Każdy element ma niepustą nazwę tekstową\", ()=>{\r",
+              "    body.forEach((element)=> {\r",
+              "        pm.expect(element.nazwa_urządzenia).to.be.a('string')\r",
+              "        pm.expect(element.nazwa_urządzenia.trim().length).to.be.above(0)\r",
+              "    })\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/devices/available",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "devices",
+            "available"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Wolne urządzenia - błąd bazy danych",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 500\", ()=>{\r",
+              "    pm.response.to.have.status(500)\r",
+              "})\r",
+              "\r",
+              "let body = pm.response.json()\r",
+              "\r",
+              "pm.test(\"API zwraca error: Database error\", ()=>{\r",
+              "    pm.expect(body.error).to.eql(\"Database error\")\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/devices/available",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "devices",
+            "available"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Wolne urządzenia - Brak dostępnych urządzeń",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 200\", ()=>{\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              "\r",
+              "let body = pm.response.json()\r",
+              "\r",
+              "pm.test(\"API zwraca tablicę\", ()=> {\r",
+              "    pm.expect(Array.isArray(body)).to.be.true\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Tablica ma zero elementów\", () => {\r",
+              "    pm.expect(body.length).to.eql(0)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/devices/available",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "devices",
+            "available"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Utworzenie rezerwacji - sukces",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 201\",() => {\r",
+              "    pm.response.to.have.status(201)\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca odpowiedź 'created'\", ()=> {\r",
+              "    pm.expect(pm.response.json().status).to.eql(\"created\")\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca dodatnie całkowite reservation_id\", ()=>{\r",
+              "    const body = pm.response.json();\r",
+              "\r",
+              "    pm.expect(Number.isInteger(body.reservation_id)).to.eql(true)\r",
+              "    pm.expect(body.reservation_id).to.be.above(0)\r",
+              "\r",
+              "    pm.collectionVariables.set(\"reservation_id\", body.reservation_id)\r",
+              "})\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 1,\"tester_id\": 2}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Wymagane jest wpisanie za device_id identyfikatora urządzenia, które obecnie nie jest zajęte (is_active=0)."
+      },
+      "response": []
+    },
+    {
+      "name": "Utworzenie rezerwacji - body null",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", ()=> {\r",
+              "    pm.response.to.have.status(400);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca error 'Invalid identifiers'\", ()=>{\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\")\r",
+              "})\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "null",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Wymagane jest wpisanie za device_id identyfikatora urządzenia, które obecnie nie jest zajęte (is_active=0)."
+      },
+      "response": []
+    },
+    {
+      "name": "Utworzenie rezerwacji - konflikt",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca 409\", ()=> {\r",
+              "    pm.response.to.have.status(409)\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca error: Device is already reserved\", () => {\r",
+              "    let body = pm.response.json()\r",
+              "    pm.expect(body.error).to.eql(\"Device is already reserved\")\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 4,\"tester_id\": 2}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Urządzenie wskazane przez `device_id` musi mieć aktywną rezerwację, a tester musi istnieć."
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - status cancelled",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 200\", ()=> {\r",
+              "    pm.response.to.have.status(200);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca status 'cancelled' przy sukcesie anulowania rezerwacji\", ()=>{\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body.status).to.eql(\"cancelled\")\r",
+              "})\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\":68}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - body null",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", ()=> {\r",
+              "    pm.response.to.have.status(400);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca error 'Invalid identifiers'\", ()=>{\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\")\r",
+              "})\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "null",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji ze zmiennej",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 200\", ()=> {\r",
+              "    pm.response.to.have.status(200);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca status 'cancelled' przy sukcesie anulowania rezerwacji\", ()=>{\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body.status).to.eql(\"cancelled\")\r",
+              "})\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\": {{reservation_id}}}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - status unchanged",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 200\", ()=> {\r",
+              "    pm.response.to.have.status(200);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca odpowiedź 'unchanged' przy próbie anulowania rezerwacji, która już jest anulowana\", ()=> {\r",
+              "    let body = pm.response.json()\r",
+              "    pm.expect(body.status).to.eql(\"unchanged\")\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\": {{reservation_id}}}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - błędna składnia JSON",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", () => {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"API zwraca error 'Invalid JSON'\", () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.error).to.eql(\"Invalid JSON\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\":3",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie nieistniejącej rezerwacji",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 200\", ()=> {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test(\"API zwraca odpowiedź 'unchanged' przy próbie anulowania rezerwacji, która nie istnieje\", ()=> {",
+              "    let body = pm.response.json()",
+              "    pm.expect(body.status).to.eql(\"unchanged\")",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\":999}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - brak reservation_id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", ()=> {",
+              "    pm.response.to.have.status(400);",
+              "})",
+              "",
+              "pm.test(\"API zwraca odpowiedź 'Invalid identifiers' przy próbie anulowania rezerwacji bez podania reservation_id w body\", ()=> {",
+              "    let body = pm.response.json()",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\");",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - Wartość poniżej minimum 1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", ()=> {",
+              "    pm.response.to.have.status(400);",
+              "})",
+              "",
+              "pm.test(\"API zwraca odpowiedź 'Invalid identifiers'\", ()=> {",
+              "    let body = pm.response.json()",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\");",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\": 0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - Wartość  jako liczba ujemna",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", ()=> {",
+              "    pm.response.to.have.status(400);",
+              "})",
+              "",
+              "pm.test(\"API zwraca odpowiedź 'Invalid identifiers'\", ()=> {",
+              "    let body = pm.response.json()",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\");",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\": -1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - Wartość  jako liczba niecałkowita",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", ()=> {",
+              "    pm.response.to.have.status(400);",
+              "})",
+              "",
+              "pm.test(\"API zwraca odpowiedź 'Invalid identifiers'\", ()=> {",
+              "    let body = pm.response.json()",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\");",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\": 1.5}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Anulowanie rezerwacji - Wartość  jako tekst",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", ()=> {",
+              "    pm.response.to.have.status(400);",
+              "})",
+              "",
+              "pm.test(\"API zwraca odpowiedź 'Invalid identifiers'\", ()=> {",
+              "    let body = pm.response.json()",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\");",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reservation_id\": \"3\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Nieistniejące urządzenie",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 404\", ()=>{\r",
+              "    pm.response.to.have.status(404);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca error: Device does not exist\", ()=>{\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body.error).to.eql(\"Device does not exist\")\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 999,\"tester_id\": 1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Urządzenie o wskazanym `device_id` nie istnieje, a tester istnieje."
+      },
+      "response": []
+    },
+    {
+      "name": "Nieistniejący tester",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 404\", ()=> {\r",
+              "    pm.response.to.have.status(404);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"API zwraca error: Tester does not exist\", ()=> {\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body.error).to.eql(\"Tester does not exist\")\r",
+              "}) "
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 4,\"tester_id\": 999}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        },
+        "description": "Request powinien używać wolnego urządzenia, zeby badać wyłącznie błąd testera, bez konfliktu rezerwacji."
+      },
+      "response": []
+    },
+    {
+      "name": "Rezerwacja - brak tester_id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", () => {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"API zwraca error Invalid identifiers\", () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.error).to.eql(\"Invalid identifiers\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 2}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Rezerwacja - błędna składnia JSON",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"API zwraca kod 400\", () => {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"API zwraca error Invalid JSON\", () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.error).to.eql(\"Invalid JSON\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"device_id\": 2, \"tester_id\":1",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:3000"
+    },
+    {
+      "key": "reservation_id",
+      "value": ""
+    }
+  ]
+}
