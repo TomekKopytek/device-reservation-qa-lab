@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
     getDevices()
       .then((devices) => {
         res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
         res.end(JSON.stringify(devices));
       })
       .catch((error) => {
@@ -26,7 +26,7 @@ const server = http.createServer((req, res) => {
     getAvailableDevices()
       .then((availableDevices) => {
         res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
         res.end(JSON.stringify(availableDevices));
       })
       .catch((error) => {
